@@ -12,7 +12,10 @@ jobs:
             -   name: Checkout repository
                 uses: actions/checkout@v4
             -   name: Test
-                run: mkdir ./build/one -p && echo "Hello World (1)" > ./build/one/index.html
+                run: |
+                    mkdir ./build/one -p && echo "Hello World (1)" > ./build/one/index.html
+                    mkdir ./build/two -p && echo "Hello World (2)" > ./build/two/index.html
+                    mkdir ./build/three -p && echo "Hello World (3)" > ./build/three/index.html
             -   name: Upload build artifact
                 uses: actions/upload-artifact@v4
                 with:
