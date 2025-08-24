@@ -12,13 +12,16 @@ jobs:
             -   name: Checkout repository
                 uses: actions/checkout@v4
             -   name: Test
+                run: mkdir ./build
+            -   name: Test
                 run: |
                     docker build -t prototype_builder ./prototype
                     docker run -d --name prototype_builder -p 8080:80 prototype_builder
-                    mkdir ./build
-                    docker cp prototype_builder:/usr/local/apache2/htdocs/ ./build
+                    mkdir ./output
+                    docker cp prototype_builder:/usr/local/apache2/htdocs/ ./output
                     docker stop prototype_builder
                     docker rm prototype_builder
+                    mv ./output/htdocs ./build
             -   name: Upload build artifact
                 uses: actions/upload-artifact@v4
                 with:
