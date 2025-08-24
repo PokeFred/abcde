@@ -6,23 +6,74 @@ on:
             - main
 
 jobs:
-    build:
+    a_build:
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout repository
                 uses: actions/checkout@v4
             -   name: Test
-                run: |
-                    mkdir ./build/one -p && echo "Hello World (1)" > ./build/one/index.html
-                    mkdir ./build/two -p && echo "Hello World (2)" > ./build/two/index.html
-                    mkdir ./build/three -p && echo "Hello World (3)" > ./build/three/index.html
+                run: mkdir ./build && echo "Hello World (1)" > ./build/index.html
             -   name: Upload build artifact
                 uses: actions/upload-artifact@v4
                 with:
-                    name: app-build
+                    name: a_build
                     path: ./build
-    deploy:
-        needs: [build]
+    b_build:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+            -   name: Test
+                run: mkdir ./build && echo "Hello World (2)" > ./build/index.html
+            -   name: Upload build artifact
+                uses: actions/upload-artifact@v4
+                with:
+                    name: b_build
+                    path: ./build
+    c_build:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+            -   name: Test
+                run: mkdir ./build && echo "Hello World (3)" > ./build/index.html
+            -   name: Upload build artifact
+                uses: actions/upload-artifact@v4
+                with:
+                    name: c_build
+                    path: ./build
+    app_build:
+        needs: [a_build, b_build, c_build]
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout repository
+                uses: actions/checkout@v4
+
+            -   name: Test 0
+                run: mkdir ./build
+            -   name: Test 1
+                uses: actions/download-artifact@v4
+                with:
+                    name: a_build
+                    path: ./build/a
+            -   name: Test 2
+                uses: actions/download-artifact@v4
+                with:
+                    name: b_build
+                    path: ./build/b
+            -   name: Test 3
+                uses: actions/download-artifact@v4
+                with:
+                    name: c_build
+                    path: ./build/c
+
+            -   name: Upload build artifact
+                uses: actions/upload-artifact@v4
+                with:
+                    name: app_build
+                    path: ./build
+    app_deploy:
+        needs: [app_build]
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
@@ -40,7 +91,7 @@ jobs:
             -   name: Download build artifact
                 uses: actions/download-artifact@v4
                 with:
-                    name: app-build
+                    name: app_build
                     path: ./build
             -   name: Setup pages
                 uses: actions/configure-pages@v5
