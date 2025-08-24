@@ -21,7 +21,7 @@ jobs:
                     docker cp prototype_builder:/usr/local/apache2/htdocs/ ./output
                     docker stop prototype_builder
                     docker rm prototype_builder
-                    mv ./output/htdocs/. ./build
+                    cp -r ./output/htdocs ./build
             -   name: Upload build artifact
                 uses: actions/upload-artifact@v4
                 with:
