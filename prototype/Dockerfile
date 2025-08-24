@@ -5,4 +5,5 @@ RUN echo "Hello World (1)" > /app/build/index.html
 
 FROM httpd:2-alpine
 WORKDIR /usr/local/apache2/htdocs/
+COPY --from=builder /app/build /usr/local/apache2/htdocs/
 EXPOSE 80
